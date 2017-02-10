@@ -5,6 +5,7 @@ import (
     "net/url"
     "net/http"
     "sitemap/modules/common"
+    "sitemap/modules/crawler"
 )
 
 func Parse(c *gin.Context) {
@@ -27,12 +28,7 @@ func Parse(c *gin.Context) {
     }
 
     if parseUrl.Host == internalHost {
-        // TODO: start crawler
-        c.JSON(http.StatusOK, gin.H{
-            "status":  "internal",
-            "message": "parseUrl.Host == internalHost",
-        })
-        return
+        crawler.Run(c, parseUrl.String())
     } else {
         // TODO: insert into DB
         c.JSON(http.StatusOK, gin.H{
