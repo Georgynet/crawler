@@ -3,6 +3,7 @@ package main
 import (
     "sitemap/modules/config"
     "sitemap/modules/prepare"
+    "strconv"
 )
 
 func main() {
@@ -10,5 +11,5 @@ func main() {
     r := config.InitGin()
     prepare.Register(r)
 
-    r.Run(":3000")
+    r.Run(":" + strconv.Itoa(config.MainConfig.Server.ServerPort))
 }
