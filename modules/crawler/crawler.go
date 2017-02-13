@@ -25,7 +25,14 @@ func Run(c *gin.Context, url string) {
 
         linksRegExp := regexp.MustCompile(`<a\s+(?:[^>]*?\s+)?href="([^"]*)"`)
 
-        fmt.Println(linksRegExp.FindAllStringSubmatch(bodyString, -1))
+        linksRaw := linksRegExp.FindAllStringSubmatch(bodyString, -1)
+        links := make([]string, len(linksRaw))
+
+        for i, item := range linksRaw {
+            links[i] = item[1]
+        }
+
+        fmt.Println(links)
     } else {
         // TODO: insert into DB: link, status, source page
     }
