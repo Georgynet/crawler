@@ -4,11 +4,13 @@ import (
     "net/http"
     "sitemap/modules/common"
     "github.com/gin-gonic/gin"
+    "github.com/golang-collections/collections/stack"
     "log"
-    "fmt"
     "io/ioutil"
     "regexp"
 )
+
+var LinksStack = stack.New()
 
 func Run(c *gin.Context, url string) {
     log.Println("[CRAWLER] Request URL: " + url)
@@ -26,13 +28,10 @@ func Run(c *gin.Context, url string) {
         linksRegExp := regexp.MustCompile(`<a\s+(?:[^>]*?\s+)?href="([^"]*)"`)
 
         linksRaw := linksRegExp.FindAllStringSubmatch(bodyString, -1)
-        links := make([]string, len(linksRaw))
 
-        for i, item := range linksRaw {
-            links[i] = item[1]
+        for _, item := range linksRaw {
+            LinksStack.Push(item[1])
         }
-
-        fmt.Println(links)
     } else {
         // TODO: insert into DB: link, status, source page
     }
