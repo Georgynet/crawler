@@ -27,6 +27,8 @@ func Parse(c *gin.Context) {
             continue
         }
 
+        VisitedLinks.Insert(rawUrl);
+
         parseUrl, parseErr := url.Parse(rawUrl)
         if parseErr != nil {
             common.ErrorJSON(c, http.StatusBadRequest, parseErr.Error())
@@ -39,8 +41,6 @@ func Parse(c *gin.Context) {
             continue
         }
 
-        VisitedLinks.Insert(rawUrl);
-
         if parseUrl.Host == internalHost {
             crawler.Run(c, parseUrl.String())
         } else {
@@ -52,4 +52,6 @@ func Parse(c *gin.Context) {
             continue
         }
     }
+
+    common.SaveResult(VisitedLinks)
 }
