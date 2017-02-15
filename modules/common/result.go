@@ -31,9 +31,8 @@ func SaveVisitedLinks(links *set.Set) {
     })
 }
 
-func SaveResult(pages *set.Set) {
-    // TODO: move output filename to config
-    file, err := os.Create("pages.csv")
+func SaveResult(pages *set.Set, filename string) {
+    file, err := os.Create(filename)
     if err != nil {
         log.Fatal("Cannot create file", err)
     }

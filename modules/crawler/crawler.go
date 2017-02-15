@@ -12,6 +12,7 @@ import (
 )
 
 var LinksStack = stack.New()
+var ExternalLinks = set.New()
 var ResultLinks = set.New()
 
 func Run(c *gin.Context, url string, sourceUrl string) {

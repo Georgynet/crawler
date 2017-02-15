@@ -52,6 +52,7 @@ func Parse(c *gin.Context) {
                 Link: startUrl.Scheme + "://" + startUrl.Host + "/" + strings.TrimLeft(parseUrl.String(), "/"),
                 Source: link.Source,
             })
+            continue
         }
 
         if internalHost == "" {
@@ -62,15 +63,16 @@ func Parse(c *gin.Context) {
         if parseUrl.Host == internalHost {
             crawler.Run(c, parseUrl.String(), link.Source)
         } else {
-            // TODO: insert into DB
-            c.JSON(http.StatusOK, gin.H{
-                "status":  "external",
-                "message": "parseUrl.Host != internalHost",
+            crawler.ExternalLinks.Insert(common.Page{
+                Link: parseUrl.String(),
+                Source: link.Source,
+                Status: 0,
             })
             continue
         }
     }
 
     common.SaveVisitedLinks(VisitedLinks)
-    common.SaveResult(crawler.ResultLinks)
+    common.SaveResult(crawler.ResultLinks, "pages.csv")
+    common.SaveResult(crawler.ExternalLinks, "external.csv")
 }
