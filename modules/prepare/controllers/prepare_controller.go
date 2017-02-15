@@ -7,6 +7,7 @@ import (
     "sitemap/modules/common"
     "sitemap/modules/crawler"
     "github.com/golang-collections/collections/set"
+    "strings"
 )
 
 var VisitedLinks = set.New()
@@ -17,6 +18,14 @@ func Parse(c *gin.Context) {
         common.ErrorJSON(c, http.StatusBadRequest, "URL isn't set")
         return
     }
+
+    startUrl, parseErr := url.Parse(rawUrl)
+    if parseErr != nil {
+        common.ErrorJSON(c, http.StatusBadRequest, "Incorrect URL")
+        return
+    }
+
+    internalHost := c.PostForm("internalHost")
 
     crawler.LinksStack.Push(common.Link{
         Link: rawUrl,
@@ -38,7 +47,13 @@ func Parse(c *gin.Context) {
             continue
         }
 
-        internalHost := c.PostForm("internalHost")
+        if !parseUrl.IsAbs() {
+            crawler.LinksStack.Push(common.Link{
+                Link: startUrl.Scheme + "://" + startUrl.Host + "/" + strings.TrimLeft(parseUrl.String(), "/"),
+                Source: link.Source,
+            })
+        }
+
         if internalHost == "" {
             common.ErrorJSON(c, http.StatusBadRequest, "InternalHost isn't set")
             continue
