@@ -13,7 +13,12 @@ type Page struct {
     Status int
 }
 
-func SaveResult(links *set.Set) {
+type Link struct {
+    Link string
+    Source string
+}
+
+func SaveVisitedLinks(links *set.Set) {
     // TODO: move output filename to config
     file, err := os.Create("result.txt")
     if err != nil {
@@ -23,5 +28,18 @@ func SaveResult(links *set.Set) {
 
     links.Do(func(item interface{}) {
         fmt.Fprintln(file, item.(string))
+    })
+}
+
+func SaveResult(pages *set.Set) {
+    // TODO: move output filename to config
+    file, err := os.Create("pages.csv")
+    if err != nil {
+        log.Fatal("Cannot create file", err)
+    }
+    defer file.Close()
+
+    pages.Do(func(item interface{}) {
+        fmt.Fprintln(file, item.(Page).Link + ";" + item.(Page).Source + ";" + fmt.Sprint(item.(Page).Status))
     })
 }

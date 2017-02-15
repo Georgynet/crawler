@@ -18,18 +18,21 @@ func Parse(c *gin.Context) {
         return
     }
 
-    crawler.LinksStack.Push(rawUrl)
+    crawler.LinksStack.Push(common.Link{
+        Link: rawUrl,
+        Source: "",
+    })
     for crawler.LinksStack.Len() > 0 {
 
-        rawUrl = crawler.LinksStack.Pop().(string)
+        link := crawler.LinksStack.Pop().(common.Link)
 
-        if VisitedLinks.Has(rawUrl) {
+        if VisitedLinks.Has(link.Link) {
             continue
         }
 
-        VisitedLinks.Insert(rawUrl);
+        VisitedLinks.Insert(link.Link);
 
-        parseUrl, parseErr := url.Parse(rawUrl)
+        parseUrl, parseErr := url.Parse(link.Link)
         if parseErr != nil {
             common.ErrorJSON(c, http.StatusBadRequest, parseErr.Error())
             continue
@@ -42,7 +45,7 @@ func Parse(c *gin.Context) {
         }
 
         if parseUrl.Host == internalHost {
-            crawler.Run(c, parseUrl.String())
+            crawler.Run(c, parseUrl.String(), link.Source)
         } else {
             // TODO: insert into DB
             c.JSON(http.StatusOK, gin.H{
@@ -53,5 +56,6 @@ func Parse(c *gin.Context) {
         }
     }
 
-    common.SaveResult(VisitedLinks)
+    common.SaveVisitedLinks(VisitedLinks)
+    common.SaveResult(crawler.ResultLinks)
 }

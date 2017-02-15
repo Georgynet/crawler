@@ -8,11 +8,13 @@ import (
     "log"
     "io/ioutil"
     "regexp"
+    "github.com/golang-collections/collections/set"
 )
 
 var LinksStack = stack.New()
+var ResultLinks = set.New()
 
-func Run(c *gin.Context, url string) {
+func Run(c *gin.Context, url string, sourceUrl string) {
     log.Println("[CRAWLER] Request URL: " + url)
     resp, err := http.Get(url)
     if err != nil {
@@ -30,9 +32,16 @@ func Run(c *gin.Context, url string) {
         linksRaw := linksRegExp.FindAllStringSubmatch(bodyString, -1)
 
         for _, item := range linksRaw {
-            LinksStack.Push(item[1])
+            LinksStack.Push(common.Link{
+                Link: item[1],
+                Source: url,
+            })
         }
-    } else {
-        // TODO: insert into DB: link, status, source page
     }
+
+    ResultLinks.Insert(common.Page{
+        Link: url,
+        Source: sourceUrl,
+        Status: resp.StatusCode,
+    })
 }
