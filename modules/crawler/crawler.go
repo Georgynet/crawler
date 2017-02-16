@@ -21,7 +21,13 @@ var StartUrl *url.URL
 
 func Run(c *gin.Context, url string, sourceUrl string) {
     log.Println("[CRAWLER] Request URL: " + url)
-    resp, err := http.Get(url)
+    client := &http.Client{
+        CheckRedirect: func(req *http.Request, via []*http.Request) error {
+            return http.ErrUseLastResponse
+        },
+    }
+
+    resp, err := client.Get(url)
     if err != nil {
         common.ErrorJSON(c, http.StatusBadRequest, "Error request: " + err.Error())
         return
