@@ -7,7 +7,6 @@ import (
     "sitemap/modules/common"
     "sitemap/modules/crawler"
     "github.com/golang-collections/collections/set"
-    "strings"
 )
 
 var VisitedLinks = set.New()
@@ -19,7 +18,8 @@ func Parse(c *gin.Context) {
         return
     }
 
-    startUrl, parseErr := url.Parse(rawUrl)
+    var parseErr error
+    crawler.StartUrl, parseErr = url.Parse(rawUrl)
     if parseErr != nil {
         common.ErrorJSON(c, http.StatusBadRequest, "Incorrect URL")
         return
@@ -44,14 +44,6 @@ func Parse(c *gin.Context) {
         parseUrl, parseErr := url.Parse(link.Link)
         if parseErr != nil {
             common.ErrorJSON(c, http.StatusBadRequest, parseErr.Error())
-            continue
-        }
-
-        if !parseUrl.IsAbs() {
-            crawler.LinksStack.Push(common.Link{
-                Link: startUrl.Scheme + "://" + startUrl.Host + "/" + strings.TrimLeft(parseUrl.String(), "/"),
-                Source: link.Source,
-            })
             continue
         }
 
