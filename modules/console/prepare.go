@@ -20,7 +20,11 @@ var LinksStack = stack.New()
 var ResultLinks = set.New()
 
 func Parse(c *cli.Context) error {
-	prepareUrl, prepareErr := prepare(c.String("url"))
+	if 0 == c.NArg() {
+		return errors.New("For help use --h.")
+	}
+
+	prepareUrl, prepareErr := parseStartUrl(c.String("url"))
 	if prepareErr != nil {
 		return prepareErr
 	}
@@ -38,7 +42,7 @@ func Parse(c *cli.Context) error {
 	return nil
 }
 
-func prepare(inputUrl string) (*url.URL, error) {
+func parseStartUrl(inputUrl string) (*url.URL, error) {
 	if "" == inputUrl {
 		return nil, errors.New("URL isn't set.")
 	}
