@@ -1,15 +1,11 @@
 package main
 
 import (
-    "sitemap/modules/config"
-    "sitemap/modules/prepare"
-    "strconv"
+	"os"
+	"sitemap/modules/console"
 )
 
 func main() {
-    //Configure Gin services
-    r := config.InitGin()
-    prepare.Register(r)
-
-    r.Run(":" + strconv.Itoa(config.MainConfig.Server.ServerPort))
+	app := console.InitApp()
+	app.Run(os.Args)
 }
