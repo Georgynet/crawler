@@ -6,8 +6,7 @@ import (
 	"errors"
 	"net/url"
 	"github.com/golang-collections/collections/stack"
-	"sitemap/modules/common"
-	"sitemap/modules/crawler"
+	"sitemap/common"
 )
 
 // Set of visited links
@@ -36,7 +35,7 @@ func Parse(c *cli.Context) error {
 	})
 
 	for LinksStack.Len() > 0 {
-		analyse(crawler.LinksStack.Pop().(common.Link))
+		analyse(LinksStack.Pop().(common.Link))
 	}
 
 	return nil

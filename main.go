@@ -2,7 +2,7 @@ package main
 
 import (
 	"os"
-	"sitemap/modules/console"
+	"sitemap/console"
 )
 
 func main() {
