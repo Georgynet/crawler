@@ -9,8 +9,10 @@ import (
     "github.com/golang-collections/collections/set"
 )
 
+// Set of visited links
 var VisitedLinks = set.New()
 
+// Prepare link and run crawler
 func Parse(c *gin.Context) {
     rawUrl := c.PostForm("url")
     if rawUrl == "" {
