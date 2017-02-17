@@ -6,7 +6,6 @@ import (
 	"errors"
 	"net/url"
 	"github.com/golang-collections/collections/stack"
-	"sitemap/common"
 )
 
 // Set of visited links
@@ -19,23 +18,19 @@ var LinksStack = stack.New()
 var ResultLinks = set.New()
 
 func Parse(c *cli.Context) error {
-	if 0 == c.NArg() {
-		return errors.New("For help use --h.")
-	}
-
 	prepareUrl, prepareErr := parseStartUrl(c.String("url"))
 	if prepareErr != nil {
 		return prepareErr
 	}
 	StartUrl = prepareUrl
 
-	LinksStack.Push(common.Link{
+	LinksStack.Push(Link{
 		Link: c.String("url"),
 		Source: "",
 	})
 
 	for LinksStack.Len() > 0 {
-		analyse(LinksStack.Pop().(common.Link))
+		analyse(LinksStack.Pop().(Link))
 	}
 
 	return nil
@@ -54,7 +49,7 @@ func parseStartUrl(inputUrl string) (*url.URL, error) {
 	return parseUrl, nil
 }
 
-func analyse(link common.Link) {
+func analyse(link Link) {
 	if VisitedLinks.Has(link.Link) {
 		return
 	}
@@ -69,7 +64,7 @@ func analyse(link common.Link) {
 	if parseUrl.Host == StartUrl.Host {
 		// run crawler
 	} else {
-		ResultLinks.Insert(common.Page{
+		ResultLinks.Insert(Page{
 			Link: parseUrl.String(),
 			Source: link.Source,
 			Type: "ext",
