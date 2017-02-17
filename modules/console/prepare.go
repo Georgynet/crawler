@@ -51,7 +51,7 @@ func prepare(inputUrl string) (*url.URL, error) {
 	return parseUrl, nil
 }
 
-func analyse(link *common.Link) {
+func analyse(link common.Link) {
 	if VisitedLinks.Has(link.Link) {
 		return
 	}
@@ -74,5 +74,5 @@ func analyse(link *common.Link) {
 		})
 	}
 
-	return false, nil
+	return
 }
