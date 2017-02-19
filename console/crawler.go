@@ -11,6 +11,7 @@ import (
 	"errors"
 )
 
+// Run page crawler
 func RunCrawler(url string, sourceUrl string) {
 	log.Println("[CRAWLER] Request URL: " + url)
 
