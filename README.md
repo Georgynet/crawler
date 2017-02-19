@@ -3,9 +3,10 @@ Web Crawler on Go
 
 ## Usage
 Parse site:
-go run main.go run --url={site-url}
+```go run main.go run --url={site-url}```
+
 Get help:
-go run main.go
+```go run main.go```
 
 ## State
 Crawler is work in progress. The software is by no means ready.
