@@ -17,6 +17,7 @@ var LinksStack = stack.New()
 // Result links
 var ResultLinks = set.New()
 
+// Start parse site
 func Parse(c *cli.Context) error {
 	prepareUrl, prepareErr := parseStartUrl(c.String("url"))
 	if prepareErr != nil {
