@@ -8,10 +8,47 @@ import (
 	"strings"
 	"io"
 	"net/url"
+	"errors"
 )
 
 func RunCrawler(url string, sourceUrl string) {
 	log.Println("[CRAWLER] Request URL: " + url)
+
+	bodyByte, statusCode, err := getBody(url)
+
+	ResultLinks.Insert(Page{
+		Link: url,
+		Source: sourceUrl,
+		Status: statusCode,
+	})
+
+	if err != nil {
+		log.Println("[CRAWLER] URL don't scaned")
+		return
+	}
+
+	log.Println("[CRAWLER] URL scaned")
+
+	bodyString := string(bodyByte[:])
+	linksRegExp := regexp.MustCompile(`<a\s+(?:[^>]*?\s+)?href="([^"]*)"`)
+	linksRaw := linksRegExp.FindAllStringSubmatch(bodyString, -1)
+
+	var newLink Link
+	for _, item := range linksRaw {
+		newLink = Link{
+			Link: item[1],
+			Source: url,
+		}
+
+		nLink, err := linkToAbs(newLink)
+		if err != nil {
+			continue
+		}
+		LinksStack.Push(nLink)
+	}
+}
+
+func getBody(url string) ([]byte, int, error) {
 	client := &http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
@@ -21,45 +58,22 @@ func RunCrawler(url string, sourceUrl string) {
 	resp, err := client.Get(url)
 	if err != nil {
 		// TODO: write to log get url errors
-		return
+		return nil, resp.StatusCode, errors.New("Url return error")
 	}
 	defer resp.Body.Close()
 
 	contentType, err := getRespContentType(resp)
 	if err != nil {
 		// TODO: write to log get contentType errors
-		return
+		return nil, resp.StatusCode, errors.New("Can't get content type")
 	}
 
 	if http.StatusOK == resp.StatusCode && "text/html" == contentType {
-		log.Println("[CRAWLER] Request URL: " + url + " scaned")
 		bodyByte, _ := ioutil.ReadAll(resp.Body)
-		bodyString := string(bodyByte[:])
-
-		linksRegExp := regexp.MustCompile(`<a\s+(?:[^>]*?\s+)?href="([^"]*)"`)
-
-		linksRaw := linksRegExp.FindAllStringSubmatch(bodyString, -1)
-
-		var newLink Link
-		for _, item := range linksRaw {
-			newLink = Link{
-				Link: item[1],
-				Source: url,
-			}
-
-			nLink, err := linkToAbs(newLink)
-			if err != nil {
-				continue
-			}
-			LinksStack.Push(nLink)
-		}
+		return bodyByte, resp.StatusCode, nil
 	}
 
-	ResultLinks.Insert(Page{
-		Link: url,
-		Source: sourceUrl,
-		Status: resp.StatusCode,
-	})
+	return nil, resp.StatusCode, errors.New("Can't get page content")
 }
 
 func getRespContentType(resp *http.Response) (string, error) {
