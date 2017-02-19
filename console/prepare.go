@@ -33,9 +33,10 @@ func Parse(c *cli.Context) error {
 		analyse(LinksStack.Pop().(Link))
 	}
 
+	saveResult()
+
 	return nil
 }
-
 func parseStartUrl(inputUrl string) (*url.URL, error) {
 	if "" == inputUrl {
 		return nil, errors.New("URL isn't set.")
@@ -62,7 +63,7 @@ func analyse(link Link) {
 	}
 
 	if parseUrl.Host == StartUrl.Host {
-		// run crawler
+		RunCrawler(parseUrl.String(), link.Source)
 	} else {
 		ResultLinks.Insert(Page{
 			Link: parseUrl.String(),
@@ -73,4 +74,9 @@ func analyse(link Link) {
 	}
 
 	return
+}
+
+func saveResult() {
+	SaveVisitedLinks(VisitedLinks, "visited-links.txt")
+	SaveResultLinks(ResultLinks, "output.csv")
 }

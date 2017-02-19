@@ -1,25 +1,16 @@
-package crawler
+package console
 
 import (
 	"net/http"
-	"sitemap/common"
-	"github.com/gin-gonic/gin"
-	"github.com/golang-collections/collections/stack"
 	"log"
 	"io/ioutil"
 	"regexp"
-	"github.com/golang-collections/collections/set"
 	"strings"
 	"io"
 	"net/url"
 )
 
-var LinksStack = stack.New()
-var ExternalLinks = set.New()
-var ResultLinks = set.New()
-var StartUrl *url.URL
-
-func Run(c *gin.Context, url string, sourceUrl string) {
+func RunCrawler(url string, sourceUrl string) {
 	log.Println("[CRAWLER] Request URL: " + url)
 	client := &http.Client{
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
@@ -29,14 +20,14 @@ func Run(c *gin.Context, url string, sourceUrl string) {
 
 	resp, err := client.Get(url)
 	if err != nil {
-		common.ErrorJSON(c, http.StatusBadRequest, "Error request: " + err.Error())
+		// TODO: write to log get url errors
 		return
 	}
 	defer resp.Body.Close()
 
 	contentType, err := getRespContentType(resp)
 	if err != nil {
-		common.ErrorJSON(c, http.StatusBadRequest, "Error get type content: " + err.Error())
+		// TODO: write to log get contentType errors
 		return
 	}
 
@@ -49,9 +40,9 @@ func Run(c *gin.Context, url string, sourceUrl string) {
 
 		linksRaw := linksRegExp.FindAllStringSubmatch(bodyString, -1)
 
-		var newLink common.Link
+		var newLink Link
 		for _, item := range linksRaw {
-			newLink = common.Link{
+			newLink = Link{
 				Link: item[1],
 				Source: url,
 			}
@@ -64,7 +55,7 @@ func Run(c *gin.Context, url string, sourceUrl string) {
 		}
 	}
 
-	ResultLinks.Insert(common.Page{
+	ResultLinks.Insert(Page{
 		Link: url,
 		Source: sourceUrl,
 		Status: resp.StatusCode,
@@ -84,7 +75,7 @@ func getRespContentType(resp *http.Response) (string, error) {
 	return cType[0], nil
 }
 
-func linkToAbs(link common.Link) (common.Link, error) {
+func linkToAbs(link Link) (Link, error) {
 	parseUrl, err := url.Parse(link.Link)
 	if err != nil {
 		return link, err

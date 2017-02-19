@@ -22,9 +22,8 @@ type Link struct {
 }
 
 // Save visited links to file
-func SaveVisitedLinks(links *set.Set) {
-	// TODO: move output filename to config
-	file, err := os.Create("result.txt")
+func SaveVisitedLinks(links *set.Set, filename string) {
+	file, err := os.Create(filename)
 	if err != nil {
 		log.Fatal("Cannot create file", err)
 	}
@@ -36,14 +35,15 @@ func SaveVisitedLinks(links *set.Set) {
 }
 
 // Save Page-struct to file
-func SaveResult(pages *set.Set, filename string) {
+func SaveResultLinks(pages *set.Set, filename string) {
 	file, err := os.Create(filename)
 	if err != nil {
 		log.Fatal("Cannot create file", err)
 	}
 	defer file.Close()
 
+	fmt.Fprintln(file, "link;source;type;status")
 	pages.Do(func(item interface{}) {
-		fmt.Fprintln(file, item.(Page).Link + ";" + item.(Page).Source + ";" + fmt.Sprint(item.(Page).Status))
+		fmt.Fprintln(file, item.(Page).Link + ";" + item.(Page).Source + ";" + item.(Page).Type + ";" + fmt.Sprint(item.(Page).Status))
 	})
 }
