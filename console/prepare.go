@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/url"
 	"github.com/golang-collections/collections/stack"
+	"log"
 )
 
 // Set of visited links
@@ -59,7 +60,7 @@ func analyse(link Link) {
 
 	parseUrl, parseErr := url.Parse(link.Link)
 	if parseErr != nil {
-		// TODO: write to log url parse errors
+		log.Println("Error parse url")
 		return
 	}
 

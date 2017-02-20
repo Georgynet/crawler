@@ -58,14 +58,14 @@ func getBody(url string) ([]byte, int, error) {
 
 	resp, err := client.Get(url)
 	if err != nil {
-		// TODO: write to log get url errors
+		log.Println("Url return error")
 		return nil, resp.StatusCode, errors.New("Url return error")
 	}
 	defer resp.Body.Close()
 
 	contentType, err := getRespContentType(resp)
 	if err != nil {
-		// TODO: write to log get contentType errors
+		log.Println("Can't get content type")
 		return nil, resp.StatusCode, errors.New("Can't get content type")
 	}
 
