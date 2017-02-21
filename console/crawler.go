@@ -96,36 +96,38 @@ func linkToAbs(link Link) (Link, error) {
 		return link, err
 	}
 
-	if !parseUrl.IsAbs() {
-		if len(link.Link) <= 0 {
+	if parseUrl.IsAbs() {
+		return link, nil
+	}
+
+	if len(link.Link) <= 0 {
+		return link, *new(error)
+	}
+
+	if string(link.Link[0]) == "/" {
+		link.Link = StartUrl.Scheme + "://" + StartUrl.Host + parseUrl.String()
+	} else if string(link.Link[0]) == "#" {
+		return link, *new(error)
+	} else if strings.TrimSpace(parseUrl.String()) != "" {
+
+		partsLink := strings.Split(parseUrl.String(), "/")
+		counter := 0
+		for _, item := range partsLink {
+			if item == ".." {
+				counter += 1
+			}
+		}
+
+		partsLink = partsLink[counter:]
+
+		partsSourceUrl := strings.Split(link.Source, "/")
+
+		if len(partsSourceUrl) < (1 + counter) {
 			return link, *new(error)
 		}
 
-		if string(link.Link[0]) == "/" {
-			link.Link = StartUrl.Scheme + "://" + StartUrl.Host + parseUrl.String()
-		} else if string(link.Link[0]) == "#" {
-			return link, *new(error)
-		} else if strings.TrimSpace(parseUrl.String()) != "" {
-
-			partsLink := strings.Split(parseUrl.String(), "/")
-			counter := 0
-			for _, item := range partsLink {
-				if item == ".." {
-					counter += 1
-				}
-			}
-
-			partsLink = partsLink[counter:]
-
-			partsSourceUrl := strings.Split(link.Source, "/")
-
-			if len(partsSourceUrl) < (1 + counter) {
-				return link, *new(error)
-			}
-
-			partsSourceUrl = partsSourceUrl[:len(partsSourceUrl)-(1+counter)]
-			link.Link = strings.Join(partsSourceUrl, "/") + "/" + strings.Join(partsLink, "/")
-		}
+		partsSourceUrl = partsSourceUrl[:len(partsSourceUrl)-(1+counter)]
+		link.Link = strings.Join(partsSourceUrl, "/") + "/" + strings.Join(partsLink, "/")
 	}
 
 	return link, nil
