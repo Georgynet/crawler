@@ -1,4 +1,4 @@
-# Crawler [![codebeat badge](https://codebeat.co/badges/7c0c5914-a4f6-4650-8903-ba9f18a7e78b)](https://codebeat.co/projects/github-com-georgynet-crawler)
+# Crawler [![codebeat badge](https://codebeat.co/badges/7c0c5914-a4f6-4650-8903-ba9f18a7e78b)](https://codebeat.co/projects/github-com-georgynet-crawler) [![Go Report Card](https://goreportcard.com/badge/github.com/Georgynet/crawler)](https://goreportcard.com/report/github.com/Georgynet/crawler)
 Web Crawler on Go
 
 ## Usage
