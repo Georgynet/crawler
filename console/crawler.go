@@ -1,14 +1,14 @@
 package console
 
 import (
-	"net/http"
-	"log"
+	"errors"
+	"io"
 	"io/ioutil"
+	"log"
+	"net/http"
+	"net/url"
 	"regexp"
 	"strings"
-	"io"
-	"net/url"
-	"errors"
 )
 
 // Run page crawler
@@ -18,7 +18,7 @@ func RunCrawler(url string, sourceUrl string) {
 	bodyByte, statusCode, err := getBody(url)
 
 	ResultLinks.Insert(Page{
-		Link: url,
+		Link:   url,
 		Source: sourceUrl,
 		Status: statusCode,
 	})
@@ -37,7 +37,7 @@ func RunCrawler(url string, sourceUrl string) {
 	var newLink Link
 	for _, item := range linksRaw {
 		newLink = Link{
-			Link: item[1],
+			Link:   item[1],
 			Source: url,
 		}
 
@@ -123,7 +123,7 @@ func linkToAbs(link Link) (Link, error) {
 				return link, *new(error)
 			}
 
-			partsSourceUrl = partsSourceUrl[:len(partsSourceUrl) - (1 + counter)]
+			partsSourceUrl = partsSourceUrl[:len(partsSourceUrl)-(1+counter)]
 			link.Link = strings.Join(partsSourceUrl, "/") + "/" + strings.Join(partsLink, "/")
 		}
 	}

@@ -1,10 +1,10 @@
 package console
 
 import (
-	"os"
-	"log"
 	"fmt"
 	"github.com/golang-collections/collections/set"
+	"log"
+	"os"
 )
 
 // Page of site
@@ -44,6 +44,6 @@ func SaveResultLinks(pages *set.Set, filename string) {
 
 	fmt.Fprintln(file, "link;source;type;status")
 	pages.Do(func(item interface{}) {
-		fmt.Fprintln(file, item.(Page).Link + ";" + item.(Page).Source + ";" + item.(Page).Type + ";" + fmt.Sprint(item.(Page).Status))
+		fmt.Fprintln(file, item.(Page).Link+";"+item.(Page).Source+";"+item.(Page).Type+";"+fmt.Sprint(item.(Page).Status))
 	})
 }

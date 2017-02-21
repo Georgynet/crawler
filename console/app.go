@@ -10,12 +10,12 @@ func InitApp() *cli.App {
 
 	app.Commands = []cli.Command{
 		{
-			Name: "run",
+			Name:    "run",
 			Aliases: []string{"r"},
-			Usage: "run crawler full site",
+			Usage:   "run crawler full site",
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name: "url",
+					Name:  "url",
 					Value: "",
 					Usage: "start url for analyse",
 				},

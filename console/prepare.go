@@ -1,20 +1,23 @@
 package console
 
 import (
-	"github.com/golang-collections/collections/set"
-	"github.com/urfave/cli"
 	"errors"
-	"net/url"
+	"github.com/golang-collections/collections/set"
 	"github.com/golang-collections/collections/stack"
+	"github.com/urfave/cli"
 	"log"
+	"net/url"
 )
 
 // Set of visited links
 var VisitedLinks = set.New()
+
 // Start analyse URL
 var StartUrl *url.URL
+
 // Links for analyse
 var LinksStack = stack.New()
+
 // Result links
 var ResultLinks = set.New()
 
@@ -27,7 +30,7 @@ func Parse(c *cli.Context) error {
 	StartUrl = prepareUrl
 
 	LinksStack.Push(Link{
-		Link: c.String("url"),
+		Link:   c.String("url"),
 		Source: "",
 	})
 
@@ -56,7 +59,7 @@ func analyse(link Link) {
 	if VisitedLinks.Has(link.Link) {
 		return
 	}
-	VisitedLinks.Insert(link.Link);
+	VisitedLinks.Insert(link.Link)
 
 	parseUrl, parseErr := url.Parse(link.Link)
 	if parseErr != nil {
@@ -68,9 +71,9 @@ func analyse(link Link) {
 		RunCrawler(parseUrl.String(), link.Source)
 	} else {
 		ResultLinks.Insert(Page{
-			Link: parseUrl.String(),
+			Link:   parseUrl.String(),
 			Source: link.Source,
-			Type: "ext",
+			Type:   "ext",
 			Status: 0,
 		})
 	}
