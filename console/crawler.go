@@ -106,9 +106,14 @@ func linkToAbs(link Link) (Link, error) {
 
 	if string(link.Link[0]) == "/" {
 		link.Link = StartUrl.Scheme + "://" + StartUrl.Host + parseUrl.String()
-	} else if string(link.Link[0]) == "#" {
+		return link, nil
+	}
+
+	if string(link.Link[0]) == "#" {
 		return link, *new(error)
-	} else if strings.TrimSpace(parseUrl.String()) != "" {
+	}
+
+	if strings.TrimSpace(parseUrl.String()) != "" {
 
 		partsLink := strings.Split(parseUrl.String(), "/")
 		counter := 0
