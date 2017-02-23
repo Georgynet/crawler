@@ -86,6 +86,6 @@ func analyse(link Link) {
 }
 
 func saveResult(filename string) {
-	SaveVisitedLinks(VisitedLinks, filename + ".txt")
-	SaveResultLinks(ResultLinks, filename + ".csv")
+	SaveVisitedLinks(VisitedLinks, filename+".txt")
+	SaveResultLinks(ResultLinks, filename+".csv")
 }
