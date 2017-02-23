@@ -29,7 +29,7 @@ func Parse(c *cli.Context) error {
 	}
 	StartUrl = prepareUrl
 
-	if "" != c.String("filename") {
+	if "" == c.String("filename") {
 		return errors.New("Filename is unset")
 	}
 
@@ -39,7 +39,7 @@ func Parse(c *cli.Context) error {
 	})
 
 	for LinksStack.Len() > 0 {
-		analyse(LinksStack.Pop().(Link))
+		go analyse(LinksStack.Pop().(Link))
 	}
 
 	saveResult(c.String("filename"))
