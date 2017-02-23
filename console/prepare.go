@@ -29,6 +29,10 @@ func Parse(c *cli.Context) error {
 	}
 	StartUrl = prepareUrl
 
+	if "" != c.String("filename") {
+		return errors.New("Filename is unset")
+	}
+
 	LinksStack.Push(Link{
 		Link:   c.String("url"),
 		Source: "",
@@ -38,7 +42,7 @@ func Parse(c *cli.Context) error {
 		analyse(LinksStack.Pop().(Link))
 	}
 
-	saveResult()
+	saveResult(c.String("filename"))
 
 	return nil
 }
@@ -81,7 +85,7 @@ func analyse(link Link) {
 	return
 }
 
-func saveResult() {
-	SaveVisitedLinks(VisitedLinks, "visited-links.txt")
-	SaveResultLinks(ResultLinks, "output.csv")
+func saveResult(filename string) {
+	SaveVisitedLinks(VisitedLinks, filename + ".txt")
+	SaveResultLinks(ResultLinks, filename + ".csv")
 }

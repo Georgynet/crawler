@@ -19,6 +19,11 @@ func InitApp() *cli.App {
 					Value: "",
 					Usage: "start url for analyse",
 				},
+				cli.StringFlag{
+					Name:  "filename",
+					Value: "output",
+					Usage: "result filename",
+				},
 			},
 			Action: Parse,
 		},
