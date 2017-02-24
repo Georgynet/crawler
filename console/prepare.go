@@ -39,7 +39,7 @@ func Parse(c *cli.Context) error {
 	})
 
 	for LinksStack.Len() > 0 {
-		go analyse(LinksStack.Pop().(Link))
+		analyse(LinksStack.Pop().(Link))
 	}
 
 	saveResult(c.String("filename"))
